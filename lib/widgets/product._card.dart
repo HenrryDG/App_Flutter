@@ -71,7 +71,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   onPressed: () async {
                     // Simulamos un retraso para no bloquear la UI
-                    await Future.delayed(const Duration(milliseconds: 500)); // Retraso simulado
+                    //await Future.delayed(const Duration(milliseconds: 500)); // Retraso simulado
 
                     // Agregar el producto al carrito
                     cart.addItem(product);

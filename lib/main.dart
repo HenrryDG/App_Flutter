@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Carrito de Compras',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: HomeScreen(),
+        home: const HomeScreen(),
         routes: {
           '/cart': (context) => const CartScreen(),
           '/home': (context) => const HomeScreen(),
