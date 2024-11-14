@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:carrito_compras/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import '../models/producto.dart';
-import 'package:carrito_compras/widgets/product_card.dart';
+import '../services/firestore_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,39 +11,42 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Producto> productos = [];
+  bool isLoading = true;
   String filtroSeleccionado = 'Todos';
   List<String> brands = ['Todos', 'Reebok', 'Adidas', 'Puma', 'Nike'];
 
   // Variable para controlar la pantalla activa
   int _currentIndex = 0;
 
-  Future<List<Producto>> obtenerProductos() async {
-    // Obtiene los productos desde Firestore
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('productos').get();
-    return snapshot.docs.map((doc) {
-      return Producto(
-        id: doc.id,
-        nombre: doc['nombre'],
-        precio: doc['precio'],
-        imagenURL: doc['imagenURL'],
-        marca: doc['marca'],
-      );
-    }).toList();
+  @override
+  void initState() {
+    super.initState();
+    _loadProductos();
+  }
+
+  Future<void> _loadProductos() async {
+    FirestoreService firestoreService = FirestoreService();
+    List<Producto> fetchedProductos = await firestoreService.getProductos();
+    setState(() {
+      productos = fetchedProductos;
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     // Filtrar los productos por marca seleccionada
+    List<Producto> productosFiltrados = filtroSeleccionado == 'Todos'
+        ? productos
+        : productos.where((product) => product.marca == filtroSeleccionado).toList();
+
     return Scaffold(
       body: Column(
         children: [
-          // Filtro en la parte superior con más margen y Dropdown más pequeño
+          // Filtro en la parte superior
           Padding(
-            padding: const EdgeInsets.only(
-              top: 60.0,
-              left: 16.0,
-              right: 16.0,
-            ),
+            padding: const EdgeInsets.only(top: 60.0, left: 16.0, right: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -67,11 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           filtroSeleccionado = newValue!;
                         });
                       },
-                      borderRadius: BorderRadius.circular(8.0),
                       items: brands.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value, style: const TextStyle(color: Colors.white)),
+                          child: Text(
+                            value,
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         );
                       }).toList(),
                     ),
@@ -81,46 +85,28 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Grid de productos desde Firestore
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FutureBuilder<List<Producto>>(
-                future: obtenerProductos(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No hay productos disponibles.'));
-                  }
-
-                  // Filtrar los productos por marca seleccionada
-                  List<Producto> productosFiltrados = filtroSeleccionado == 'Todos'
-                      ? snapshot.data!
-                      : snapshot.data!.where((product) => product.marca == filtroSeleccionado).toList();
-
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                      childAspectRatio: 0.59,
+          // Mostrar los productos
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 0.59,
+                      ),
+                      itemCount: productosFiltrados.length,
+                      itemBuilder: (context, index) {
+                        final product = productosFiltrados[index];
+                        return ProductCard(producto: product);
+                      },
                     ),
-                    itemCount: productosFiltrados.length,
-                    itemBuilder: (context, index) {
-                      final product = productosFiltrados[index];
-                      return ProductCard(producto: product); // Usando el widget personalizado ProductCard
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
+                ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -154,4 +140,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
