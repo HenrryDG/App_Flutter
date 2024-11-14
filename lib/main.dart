@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart'; // Asegúrate de importar firebase_core
 import 'providers/cart_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();  // Inicializa Firebase
+
+  runApp(const MyApp());  // Corre tu aplicación
 }
 
 class MyApp extends StatelessWidget {
