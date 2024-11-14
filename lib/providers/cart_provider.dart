@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import '../models/producto.dart';
 
 class CartProvider with ChangeNotifier {
-  final Map<String, Product> _items = {};
+  final Map<String, Producto> _items = {};
 
-  Map<String, Product> get items => _items;
+  Map<String, Producto> get items => _items;
 
-  void addItem(Product product) {
-    if (_items.containsKey(product.id)) {
-      _items[product.id]!.cantidad++;
+  void adicionarItem(Producto producto) {
+    if (_items.containsKey(producto.id)) {
+      _items[producto.id]!.cantidad++;
     } else {
-      _items[product.id] = product;
+      _items[producto.id] = producto;
     }
     notifyListeners();
   }
 
-  void removeItem(String productId) {
+  void removerItem(String productId) {
     final existingProduct = _items[productId];
 
     // Si el producto está en el carrito y tiene más de 1 unidad, resta 1

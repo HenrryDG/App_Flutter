@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.blue),
         home: const HomeScreen(),
         routes: {
-          '/cart': (context) => const CartScreen(),
-          '/home': (context) => const HomeScreen(),
+          '/carrito': (context) => const CartScreen(),
+          '/inicio': (context) => const HomeScreen(),
         },
       ),
     );

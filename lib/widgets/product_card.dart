@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/product.dart';
+import '../models/producto.dart';
 import '../providers/cart_provider.dart';
 import 'snackbar.dart'; // Asegúrate de que tienes el archivo de snackbar
 
 class ProductCard extends StatelessWidget {
-  final Product product;
+  final Producto producto;
 
-  const ProductCard({super.key, required this.product});
+  const ProductCard({super.key, required this.producto});
 
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
+    final carrito = Provider.of<CartProvider>(context);
 
     return Card(
       elevation: 5,
@@ -27,7 +27,7 @@ class ProductCard extends StatelessWidget {
               topRight: Radius.circular(15),
             ),
             child: Image.network(
-              product.imagenURL,
+              producto.imagenURL,
               height: 150, // Establece una altura fija para la imagen
               width: double.infinity,
               fit: BoxFit.cover,
@@ -36,7 +36,7 @@ class ProductCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              product.nombre,
+              producto.nombre,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -53,7 +53,7 @@ class ProductCard extends StatelessWidget {
               children: [
                 // Texto del precio
                 Text(
-                  'Bs. ${product.precio}',
+                  'Bs. ${producto.precio}',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -74,12 +74,12 @@ class ProductCard extends StatelessWidget {
                     //await Future.delayed(const Duration(milliseconds: 500)); // Retraso simulado
 
                     // Agregar el producto al carrito
-                    cart.addItem(product);
+                    carrito.adicionarItem(producto);
 
                     // Mostrar el CustomSnackBar
                     CustomSnackBar.showCustomSnackBar(
                       context,
-                      '${product.nombre} añadido al carrito',
+                      '${producto.nombre} añadido al carrito',
                       onActionPressed: () {
                         Navigator.pushNamed(context, '/cart'); // Acción al hacer clic en 'Ver carrito'
                       },

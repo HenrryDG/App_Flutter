@@ -29,7 +29,7 @@ class CartScreen extends StatelessWidget {
             // Lista de productos en el carrito
             Expanded(
               child: ListView(
-                children: cart.items.values.map((product) {
+                children: cart.items.values.map((producto) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12.0),
                     elevation: 4,
@@ -39,15 +39,15 @@ class CartScreen extends StatelessWidget {
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16.0),
                       title: Text(
-                        product.nombre,
+                        producto.nombre,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text('Cantidad: ${product.cantidad}'),
+                      subtitle: Text('Cantidad: ${producto.cantidad}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Bs. ${double.parse(product.precio) * product.cantidad}',
+                            'Bs. ${double.parse(producto.precio) * producto.cantidad}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.indigo,
@@ -59,7 +59,7 @@ class CartScreen extends StatelessWidget {
                             icon: const Icon(Icons.add),
                             color: Colors.green,
                             onPressed: () {
-                              cart.addItem(product);
+                              cart.adicionarItem(producto);
                             },
                           ),
                           const SizedBox(width: 8),
@@ -68,7 +68,7 @@ class CartScreen extends StatelessWidget {
                             icon: const Icon(Icons.remove),
                             color: Colors.red,
                             onPressed: () {
-                              cart.removeItem(product.id);
+                              cart.removerItem(producto.id);
                             },
                           ),
                         ],
@@ -118,7 +118,7 @@ class CartScreen extends StatelessWidget {
         currentIndex: 1,  // Asegura que la opción del carrito esté seleccionada
         onTap: (int index) {
           if (index == 0) {
-            Navigator.pushNamed(context, '/home'); // Va a la pantalla de inicio
+            Navigator.pushNamed(context, '/inicio'); // Va a la pantalla de inicio
           }
         },
         items: const [

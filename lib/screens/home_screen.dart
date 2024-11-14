@@ -1,6 +1,6 @@
-import 'package:carrito_compras/widgets/product._card.dart';
+import 'package:carrito_compras/widgets/product_card.dart';
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import '../models/producto.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,19 +10,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Product> products = [
+  final List<Producto> productos = [
     // #REGION Productos
-    Product(id: '1', nombre: 'CL Leather Hexalite', precio: '1199', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/347420-1200-auto?v=638398250868300000&width=1200&height=auto&aspect=true', marca: 'Reebok'),
-    Product(id: '2', nombre: 'Galaxy 6', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/304761-300-auto?v=638334118800830000&width=300&height=auto&aspect=true', marca: 'Adidas'),
-    Product(id: '3', nombre: 'SliptStream', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/308879-300-auto?v=638334129006000000&width=300&height=auto&aspect=true',marca: 'Puma'),
-    Product(id: '4', nombre: 'Run 70S', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/305304-300-auto?v=638334120006730000&width=300&height=auto&aspect=true', marca: 'Adidas'),
-    Product(id: '5', nombre: 'Nike Revolution 7', precio: '859', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/406583-300-auto?v=638537248883730000&width=300&height=auto&aspect=true', marca: 'Nike'),
-    Product(id: '6', nombre: 'Courtblock', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/360085-300-auto?v=638461130930900000&width=300&height=auto&aspect=true', marca: 'Adidas'),
+    Producto(id: '1', nombre: 'CL Leather Hexalite', precio: '1199', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/347420-1200-auto?v=638398250868300000&width=1200&height=auto&aspect=true', marca: 'Reebok'),
+    Producto(id: '2', nombre: 'Galaxy 6', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/304761-300-auto?v=638334118800830000&width=300&height=auto&aspect=true', marca: 'Adidas'),
+    Producto(id: '3', nombre: 'SliptStream', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/308879-300-auto?v=638334129006000000&width=300&height=auto&aspect=true',marca: 'Puma'),
+    Producto(id: '4', nombre: 'Run 70S', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/305304-300-auto?v=638334120006730000&width=300&height=auto&aspect=true', marca: 'Adidas'),
+    Producto(id: '5', nombre: 'Nike Revolution 7', precio: '859', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/406583-300-auto?v=638537248883730000&width=300&height=auto&aspect=true', marca: 'Nike'),
+    Producto(id: '6', nombre: 'Courtblock', precio: '594.3', imagenURL: 'https://fairplaybo.vtexassets.com/arquivos/ids/360085-300-auto?v=638461130930900000&width=300&height=auto&aspect=true', marca: 'Adidas'),
   ];
 
   
 
-  String selectedBrand = 'Todos';
+  String filtroSeleccionado = 'Todos';
   List<String> brands = ['Todos', 'Reebok', 'Adidas', 'Puma', 'Nike'];
 
   // Variable para controlar la pantalla activa
@@ -31,9 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // Filtrar los productos por marca seleccionada
-    List<Product> filteredProducts = selectedBrand == 'Todos'
-        ? products
-        : products.where((product) => product.marca == selectedBrand).toList();
+    List<Producto> productosFiltrados = filtroSeleccionado == 'Todos'
+        ? productos
+        : productos.where((product) => product.marca == filtroSeleccionado).toList();
 
     return Scaffold(
       body: Column(
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      value: selectedBrand,
+                      value: filtroSeleccionado,
                       icon: const Icon(Icons.filter_list, color: Colors.white),
                       dropdownColor:
                         Colors.indigo, // Fondo del menú desplegable
@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.white), // Color de texto
                       onChanged: (String? newValue) {
                       setState(() {
-                        selectedBrand = newValue!;
+                        filtroSeleccionado = newValue!;
                       });
                       },
                       borderRadius: BorderRadius.circular(8.0), // Añade border radius
@@ -103,11 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   childAspectRatio:
                       0.59, // Ajusta la relación de aspecto de las tarjetas
                 ),
-                itemCount: filteredProducts.length,
+                itemCount: productosFiltrados.length,
                 itemBuilder: (context, index) {
-                  final product = filteredProducts[index];
+                  final product = productosFiltrados[index];
                   return ProductCard(
-                      product: product); // Usa el widget personalizado
+                      producto: product); // Usa el widget personalizado
                 },
               ),
             ),
@@ -122,9 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
           });
 
           if (_currentIndex == 1) {
-            Navigator.pushNamed(context, '/cart');
+            Navigator.pushNamed(context, '/carrito');
           } else {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/inicio');
           }
         },
         items: const [
@@ -140,8 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: Colors.indigo, // Color del ítem seleccionado
         unselectedItemColor: Colors.black54, // Color del ítem no seleccionado
         showSelectedLabels: true, // Mostrar etiquetas de los íconos
-        showUnselectedLabels:
-            true, // Mostrar etiquetas de los íconos no seleccionados
+        showUnselectedLabels: true, // Mostrar etiquetas de los íconos no seleccionados
       ),
     );
   }

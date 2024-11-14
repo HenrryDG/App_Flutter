@@ -1,4 +1,4 @@
-class Product {
+class Producto {
   final String id;
   final String nombre;
   final String precio;
@@ -6,7 +6,7 @@ class Product {
   final String marca;
   int cantidad;
 
-  Product({
+  Producto({
     required this.id,
     required this.nombre,
     required this.precio,
