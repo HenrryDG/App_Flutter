@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/producto.dart';
 import '../providers/cart_provider.dart';
-import 'snackbar.dart'; // Asegúrate de que tienes el archivo de snackbar
+import 'snackbar.dart';
+import '../screens/productDetail_screen.dart'; // Importa la nueva pantalla
 
 class ProductCard extends StatelessWidget {
   final Producto producto;
@@ -18,83 +19,107 @@ class ProductCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15),
-              topRight: Radius.circular(15),
+      child: InkWell(
+        onTap: () {
+          // Navegar a la pantalla de detalles del producto
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailScreen(producto: producto),
             ),
-            child: Image.network(
-              producto.imagenURL,
-              height: 150, // Establece una altura fija para la imagen
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              producto.nombre,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Para separar el precio y el botón
-              children: [
-                // Texto del precio
-                Text(
-                  'Bs. ${producto.precio}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.deepPurple,
-                  ),
+              child: Image.network(
+                producto.imagenURL,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.broken_image,
+                  size: 150,
+                  color: Colors.grey,
                 ),
-                // Botón de añadir al carrito
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo, // Color de fondo
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10), // Bordes redondeados
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                producto.nombre,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                '${producto.categoria} - ${producto.genero}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black26,
+                ),
+              ),
+            ),
+            Expanded( // Añadido Expanded
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Bs. ${producto.precio}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.indigo,
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Reduce el tamaño del botón
-                  ),
-                  onPressed: () async {
-                    // Simulamos un retraso para no bloquear la UI
-                    //await Future.delayed(const Duration(milliseconds: 500)); // Retraso simulado
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigo,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      ),
+                      onPressed: () {
+                        carrito.adicionarItem(producto);
 
-                    // Agregar el producto al carrito
-                    carrito.adicionarItem(producto);
-
-                    // Mostrar el CustomSnackBar
-                    CustomSnackBar.showCustomSnackBar(
-                      context,
-                      '${producto.nombre} añadido al carrito',
-                      onActionPressed: () {
-                        Navigator.pushNamed(context, '/cart'); // Acción al hacer clic en 'Ver carrito'
+                        CustomSnackBar.showCustomSnackBar(
+                          context,
+                          '${producto.nombre} añadido al carrito',
+                          onActionPressed: () {
+                            Navigator.pushNamed(context, '/carrito');
+                          },
+                          icon: Icons.shopping_cart,
+                          backgroundColor: Colors.indigo,
+                          duration: const Duration(seconds: 3),
+                        );
                       },
-                    );
-                  },
-                  child: const Icon(
-                    Icons.add_shopping_cart, // Ícono del carrito de compras
-                    size: 20, // Reduce el tamaño del ícono
-                    color: Colors.white, // Color del ícono
-                  ),
+                      child: const Icon(
+                        Icons.add_shopping_cart,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

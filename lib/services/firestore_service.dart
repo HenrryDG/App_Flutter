@@ -15,6 +15,9 @@ class FirestoreService {
             precio: doc['precio'],
             imagenURL: doc['imagenURL'],
             marca: doc['marca'],
+            genero: doc['genero'], // Obtener género
+            categoria: doc['categoria'], // Obtener categoría
+            tallas: List<dynamic>.from(doc['tallas']), // Obtener tallas (puede ser lista de números o cadenas)
           ))
           .toList();
     } catch (e) {
