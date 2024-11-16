@@ -6,10 +6,12 @@ class CartProvider with ChangeNotifier {
 
   Map<String, Producto> get items => _items;
 
-  void adicionarItem(Producto producto) {
+  void adicionarItem(Producto producto, String tallaSeleccionada) {
     if (_items.containsKey(producto.id)) {
       _items[producto.id]!.cantidad++;
+      _items[producto.id]!.tallaSeleccionada = tallaSeleccionada; // Actualizar talla
     } else {
+      producto.tallaSeleccionada = tallaSeleccionada; // Asignar la talla seleccionada
       _items[producto.id] = producto;
     }
     notifyListeners();
@@ -18,11 +20,9 @@ class CartProvider with ChangeNotifier {
   void removerItem(String productId) {
     final existingProduct = _items[productId];
 
-    // Si el producto está en el carrito y tiene más de 1 unidad, resta 1
     if (existingProduct != null && existingProduct.cantidad > 1) {
       existingProduct.cantidad--;
     } else {
-      // Si la cantidad es 1 o el producto no existe, elimina el producto
       _items.remove(productId);
     }
 

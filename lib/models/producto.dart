@@ -8,6 +8,7 @@ class Producto {
   final String categoria; // Campo para categoría
   final List<dynamic> tallas; // Campo flexible para tallas (números o cadenas)
   int cantidad;
+  String tallaSeleccionada; // Campo para talla seleccionada
 
   Producto({
     required this.id,
@@ -19,5 +20,6 @@ class Producto {
     required this.categoria,
     required this.tallas, // Campo flexible para tallas
     this.cantidad = 1,
+    this.tallaSeleccionada = "",
   });
 }

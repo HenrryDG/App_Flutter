@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import '../models/producto.dart';
-import '../providers/cart_provider.dart';
-import 'snackbar.dart';
+
 import '../screens/productDetail_screen.dart'; // Importa la nueva pantalla
 
 class ProductCard extends StatelessWidget {
@@ -12,12 +11,10 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final carrito = Provider.of<CartProvider>(context);
-
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: InkWell(
         onTap: () {
@@ -72,46 +69,27 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded( // Añadido Expanded
+            Expanded(
+              // Añadido Expanded
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Bs. ${producto.precio}',
                       style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                         color: Colors.indigo,
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigo,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      ),
-                      onPressed: () {
-                        carrito.adicionarItem(producto);
-
-                        CustomSnackBar.showCustomSnackBar(
-                          context,
-                          '${producto.nombre} añadido al carrito',
-                          onActionPressed: () {
-                            Navigator.pushNamed(context, '/carrito');
-                          },
-                          icon: Icons.shopping_cart,
-                          backgroundColor: Colors.indigo,
-                          duration: const Duration(seconds: 3),
-                        );
-                      },
-                      child: const Icon(
-                        Icons.add_shopping_cart,
-                        size: 20,
-                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black45,
+                            offset: Offset(1.0, 1.0),
+                          ),
+                        ],
                       ),
                     ),
                   ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
 import '../models/producto.dart';
-
+import '../widgets/snackbar.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Producto producto;
@@ -12,17 +14,16 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  String? tallaSeleccionada;
+  String tallaSeleccionada = '';
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
+    final producto = widget.producto;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.producto.nombre,
-          style: const TextStyle(color: Colors.white),
-        ),
+        title: Text(producto.nombre, style: const TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -31,55 +32,55 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              widget.producto.imagenURL,
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            // Centrar la imagen
+            Center(
+              child: Image.network(
+                producto.imagenURL,
+                fit: BoxFit.cover,
+                height: 300, // Ajusta el tamaño según sea necesario
+                width: 300,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
-              widget.producto.nombre,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Marca: ${widget.producto.marca}',
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Categoría: ${widget.producto.categoria}',
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Género: ${widget.producto.genero}',
-              style: const TextStyle(fontSize: 16, color: Colors.black54),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Tallas disponibles:',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
+              producto.nombre,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Wrap(
-              spacing: 8.0, // Espacio horizontal entre los cuadros
-              runSpacing: 8.0, // Espacio vertical entre las filas de cuadros
-              children: widget.producto.tallas.map<Widget>((talla) {
+              spacing: 8.0, // Espaciado horizontal
+              runSpacing: 8.0, // Espaciado vertical
+              children: [
+                _buildEtiqueta(producto.marca),
+                _buildEtiqueta(producto.categoria),
+                _buildEtiqueta(producto.genero),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Precio: Bs. ${producto.precio}',
+              style: const TextStyle(fontSize: 18, color: Colors.indigo),
+            ),
+            const SizedBox(height: 16),
+
+            // Selección de talla
+            const Text('Tallas disponibles:', style: TextStyle(fontSize: 16, color: Colors.black54)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: producto.tallas.map<Widget>((talla) {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      tallaSeleccionada = talla.toString();
+                      tallaSeleccionada = talla.toString(); // Actualizar la talla seleccionada
                     });
                   },
                   child: Container(
-                    width: 50, // Ancho fijo para todos los cuadros
+                    width: 50,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: tallaSeleccionada == talla.toString()
-                          ? Colors.indigo
-                          : Colors.grey[200],
+                      color: tallaSeleccionada == talla.toString() ? Colors.indigo : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.black12),
                     ),
@@ -88,9 +89,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         talla.toString(),
                         style: TextStyle(
                           fontSize: 16,
-                          color: tallaSeleccionada == talla.toString()
-                              ? Colors.white
-                              : Colors.black,
+                          color: tallaSeleccionada == talla.toString() ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
@@ -99,13 +98,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               }).toList(),
             ),
             const SizedBox(height: 16),
+
+            // Botón de añadir al carrito
             ElevatedButton(
-              onPressed: () {
-              },
+              onPressed: tallaSeleccionada.isNotEmpty
+                  ? () {
+                      cart.adicionarItem(producto, tallaSeleccionada);
+
+                      // Mostrar un SnackBar
+                      CustomSnackBar.showCustomSnackBar(
+                        context,
+                        'Producto añadido al carrito',
+                        onActionPressed: () {
+                          Navigator.pushNamed(context, '/carrito');
+                        },
+                        icon: Icons.shopping_cart,
+                        backgroundColor: Colors.indigo,
+                      );
+                    }
+                  : null, // Desactivar si no se seleccionó talla
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
               child: const Text(
@@ -114,6 +130,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEtiqueta(String texto) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.indigo.withOpacity(0.1), // Fondo con opacidad
+        borderRadius: BorderRadius.circular(20), // Bordes redondeados
+        border: Border.all(color: Colors.indigo, width: 1), // Borde
+      ),
+      child: Text(
+        texto,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Colors.indigo,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+  const CartScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,13 +11,12 @@ class CartScreen extends StatelessWidget {
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0), // Margen alrededor de la lista
+        padding: const EdgeInsets.all(16.0), 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título con margen superior y alineado a la izquierda
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0, top: 40.0), // Margen superior ajustado
+              padding: const EdgeInsets.only(bottom: 16.0, top: 40.0),
               child: Text(
                 'Carrito de Compras',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -26,7 +25,6 @@ class CartScreen extends StatelessWidget {
                     ),
               ),
             ),
-            // Lista de productos en el carrito
             Expanded(
               child: ListView(
                 children: cart.items.values.map((producto) {
@@ -34,7 +32,7 @@ class CartScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 12.0),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // Bordes redondeados
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16.0),
@@ -42,7 +40,15 @@ class CartScreen extends StatelessWidget {
                         producto.nombre,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text('Cantidad: ${producto.cantidad}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Cantidad: ${producto.cantidad}'),
+                          if (producto.tallaSeleccionada.isNotEmpty)
+                            Text('Talla: ${producto.tallaSeleccionada}', 
+                                style: const TextStyle(color: Colors.black54)),
+                        ],
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -54,16 +60,14 @@ class CartScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Botón de añadir
                           IconButton(
                             icon: const Icon(Icons.add),
                             color: Colors.green,
                             onPressed: () {
-                              cart.adicionarItem(producto);
+                              cart.adicionarItem(producto, producto.tallaSeleccionada);
                             },
                           ),
                           const SizedBox(width: 8),
-                          // Botón de eliminar
                           IconButton(
                             icon: const Icon(Icons.remove),
                             color: Colors.red,
@@ -78,7 +82,6 @@ class CartScreen extends StatelessWidget {
                 }).toList(),
               ),
             ),
-            // Total y botón de pago
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
@@ -97,7 +100,7 @@ class CartScreen extends StatelessWidget {
                       // Lógica de pago o confirmación
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo, // Color del botón
+                      backgroundColor: Colors.indigo,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -115,10 +118,10 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,  // Asegura que la opción del carrito esté seleccionada
+        currentIndex: 1,
         onTap: (int index) {
           if (index == 0) {
-            Navigator.pushNamed(context, '/inicio'); // Va a la pantalla de inicio
+            Navigator.pushNamed(context, '/inicio'); 
           }
         },
         items: const [
@@ -131,10 +134,6 @@ class CartScreen extends StatelessWidget {
             label: 'Carrito',
           ),
         ],
-        selectedItemColor: Colors.indigo, // Color del ítem seleccionado
-        unselectedItemColor: Colors.black54, // Color del ítem no seleccionado
-        showSelectedLabels: true, // Mostrar etiquetas de los íconos
-        showUnselectedLabels: true, // Mostrar etiquetas de los íconos no seleccionados
       ),
     );
   }
