@@ -134,6 +134,10 @@ class CartScreen extends StatelessWidget {
             label: 'Carrito',
           ),
         ],
+        selectedItemColor: Colors.indigo,
+        unselectedItemColor: Colors.black54,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../models/producto.dart';
 import '../widgets/snackbar.dart';
+import '../widgets/etiqueta.dart'; // Importa el widget Etiqueta
 
 class ProductDetailScreen extends StatefulWidget {
   final Producto producto;
@@ -37,7 +38,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Image.network(
                 producto.imagenURL,
                 fit: BoxFit.cover,
-                height: 300, // Ajusta el tamaño según sea necesario
+                height: 300,
                 width: 300,
               ),
             ),
@@ -51,9 +52,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               spacing: 8.0, // Espaciado horizontal
               runSpacing: 8.0, // Espaciado vertical
               children: [
-                _buildEtiqueta(producto.marca),
-                _buildEtiqueta(producto.categoria),
-                _buildEtiqueta(producto.genero),
+                Etiqueta(texto: producto.marca),
+                Etiqueta(texto: producto.categoria),
+                Etiqueta(texto: producto.genero),
               ],
             ),
             const SizedBox(height: 16),
@@ -130,25 +131,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEtiqueta(String texto) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.indigo.withOpacity(0.1), // Fondo con opacidad
-        borderRadius: BorderRadius.circular(20), // Bordes redondeados
-        border: Border.all(color: Colors.indigo, width: 1), // Borde
-      ),
-      child: Text(
-        texto,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.indigo,
-          fontWeight: FontWeight.w500,
         ),
       ),
     );
