@@ -24,4 +24,13 @@ class FirestoreService {
       return [];
     }
   }
+
+  Future<void> registrarVenta(Map<String, dynamic> venta) async {
+    try {
+      await _db.collection('ventas').add(venta);
+      print("Venta registrada con éxito");
+    } catch (e) {
+      print("Error al registrar la venta: $e");
+    }
+  }
 }

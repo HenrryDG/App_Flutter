@@ -1,3 +1,5 @@
+import 'package:carrito_compras/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
@@ -96,8 +98,30 @@ class CartScreen extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      // Lógica de pago o confirmación
+                    onPressed: () async {
+                      final venta = {
+                        'productos' : cart.items.values.map((producto){
+                          return {
+                            'nombre': producto.nombre,
+                            'cantidad': producto.cantidad,
+                            'talla': producto.tallaSeleccionada,
+                            'precio': double.parse(producto.precio),
+                          };
+                        }).toList(), 
+                        'fecha': Timestamp.now(),
+                        'total': cart.totalAmount,
+                      };
+
+                      await FirestoreService().registrarVenta(venta);
+                      cart.items.clear();
+                      cart.notifyListeners();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Compra realizada con éxito'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.indigo,
