@@ -1,7 +1,7 @@
-import 'package:carrito_compras/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import '../models/producto.dart';
 import '../services/firestore_service.dart';
+import '../widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String filtroSeleccionado = 'Todos';
   List<String> brands = ['Todos', 'Reebok', 'Adidas', 'Puma', 'Nike'];
 
-  // Variable para controlar la pantalla activa
+  // Controlar la pantalla activa
   int _currentIndex = 0;
 
   @override
@@ -36,80 +36,91 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrar los productos por marca seleccionada
+    // Filtrar los productos
     List<Producto> productosFiltrados = filtroSeleccionado == 'Todos'
         ? productos
         : productos.where((product) => product.marca == filtroSeleccionado).toList();
 
     return Scaffold(
-      body: Column(
-        children: [
-          // Filtro en la parte superior
-          Padding(
-            padding: const EdgeInsets.only(top: 60.0, left: 16.0, right: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  width: 110.0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  margin: const EdgeInsets.only(top: 20.0),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo,
-                    borderRadius: BorderRadius.circular(8.0),
+      backgroundColor: Colors.grey[100],
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Título y filtro
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Tienda de Ropa",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: filtroSeleccionado,
-                      icon: const Icon(Icons.filter_list, color: Colors.white),
-                      dropdownColor: Colors.indigo,
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          filtroSeleccionado = newValue!;
-                        });
-                      },
-                      items: brands.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: const TextStyle(color: Colors.white),
+                  const SizedBox(height: 8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: brands.map((brand) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(brand),
+                            selected: filtroSeleccionado == brand,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                filtroSeleccionado = selected ? brand : 'Todos';
+                              });
+                            },
+                            selectedColor: Colors.indigo,
+                            backgroundColor: Colors.grey[300],
+                            labelStyle: TextStyle(
+                              color: filtroSeleccionado == brand
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                           ),
                         );
                       }).toList(),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // Mostrar los productos
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 0.59,
+            // Mostrar productos
+            isLoading
+                ? const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
+                          childAspectRatio: 0.65,
+                        ),
+                        itemCount: productosFiltrados.length,
+                        itemBuilder: (context, index) {
+                          final product = productosFiltrados[index];
+                          return ProductCard(producto: product);
+                        },
                       ),
-                      itemCount: productosFiltrados.length,
-                      itemBuilder: (context, index) {
-                        final product = productosFiltrados[index];
-                        return ProductCard(producto: product);
-                      },
                     ),
                   ),
-                ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        elevation: 10,
         currentIndex: _currentIndex,
         onTap: (int index) {
           setState(() {
@@ -124,18 +135,20 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.shopping_cart_outlined),
+            activeIcon: Icon(Icons.shopping_cart),
             label: 'Carrito',
           ),
         ],
         selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.black54,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
       ),
     );
   }

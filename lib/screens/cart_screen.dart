@@ -17,24 +17,26 @@ class CartScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Titulo de la pantalla
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0, top: 40.0),
               child: Text(
                 'Carrito de Compras',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.indigo,
+                ),
               ),
             ),
+            // Lista de productos en el carrito
             Expanded(
               child: ListView(
                 children: cart.items.values.map((producto) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12.0),
-                    elevation: 4,
+                    elevation: 6,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16.0),
@@ -47,15 +49,17 @@ class CartScreen extends StatelessWidget {
                         children: [
                           Text('Cantidad: ${producto.cantidad}'),
                           if (producto.tallaSeleccionada.isNotEmpty)
-                            Text('Talla: ${producto.tallaSeleccionada}', 
-                                style: const TextStyle(color: Colors.black54)),
+                            Text(
+                              'Talla: ${producto.tallaSeleccionada}',
+                              style: const TextStyle(color: Colors.black54),
+                            ),
                         ],
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Bs. ${double.parse(producto.precio) * producto.cantidad}',
+                            'Bs. ${(double.parse(producto.precio) * producto.cantidad).toStringAsFixed(2)}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.indigo,
@@ -84,6 +88,7 @@ class CartScreen extends StatelessWidget {
                 }).toList(),
               ),
             ),
+            // Total y botón de pago
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Row(
@@ -97,44 +102,46 @@ class CartScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final venta = {
-                        'productos' : cart.items.values.map((producto){
-                          return {
-                            'nombre': producto.nombre,
-                            'cantidad': producto.cantidad,
-                            'talla': producto.tallaSeleccionada,
-                            'precio': double.parse(producto.precio),
-                          };
-                        }).toList(), 
-                        'fecha': Timestamp.now(),
-                        'total': cart.totalAmount,
-                      };
+                  // Mostrar el botón solo si el carrito tiene productos
+                  if (cart.items.isNotEmpty) 
+                    ElevatedButton(
+                      onPressed: () async {
+                        final venta = {
+                          'productos': cart.items.values.map((producto) {
+                            return {
+                              'nombre': producto.nombre,
+                              'cantidad': producto.cantidad,
+                              'talla': producto.tallaSeleccionada,
+                              'precio': double.parse(producto.precio),
+                            };
+                          }).toList(),
+                          'fecha': Timestamp.now(),
+                          'total': cart.totalAmount,
+                        };
 
-                      await FirestoreService().registrarVenta(venta);
-                      cart.items.clear();
-                      cart.notifyListeners();
+                        await FirestoreService().registrarVenta(venta);
+                        cart.items.clear();
+                        cart.notifyListeners();
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Compra realizada con éxito'),
-                          duration: Duration(seconds: 2),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Compra realizada con éxito'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigo,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Pagar',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                    child: const Text(
-                      'Pagar',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
                 ],
               ),
             ),
