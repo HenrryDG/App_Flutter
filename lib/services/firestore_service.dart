@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/producto.dart';
+import '../models/venta.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -34,4 +35,30 @@ class FirestoreService {
       print("Error al registrar la venta: $e");
     }
   }
+
+  Future<List<Venta>> getVentas({DateTime? desde, DateTime? hasta, String? clienteId}) async {
+  try {
+    Query query = _db.collection('ventas').orderBy('fecha', descending: true);
+
+    // Agregar filtros dinámicos según los parámetros
+    if (desde != null) {
+      query = query.where('fecha', isGreaterThanOrEqualTo: desde);
+    }
+    if (hasta != null) {
+      query = query.where('fecha', isLessThanOrEqualTo: hasta);
+    }
+    if (clienteId != null) {
+      query = query.where('clienteId', isEqualTo: clienteId);
+    }
+
+    QuerySnapshot querySnapshot = await query.get();
+    return querySnapshot.docs
+        .map((doc) => Venta.fromFirestore(doc.data() as Map<String, dynamic>))
+        .toList();
+  } catch (e) {
+    print("Error al obtener ventas: $e");
+    return [];
+  }
+}
+
 }

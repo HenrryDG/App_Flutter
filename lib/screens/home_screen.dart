@@ -39,7 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // Filtrar los productos
     List<Producto> productosFiltrados = filtroSeleccionado == 'Todos'
         ? productos
-        : productos.where((product) => product.marca == filtroSeleccionado).toList();
+        : productos
+            .where((product) => product.marca == filtroSeleccionado)
+            .toList();
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -101,7 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12.0,
                           mainAxisSpacing: 12.0,
@@ -121,19 +124,26 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         elevation: 10,
-        currentIndex: _currentIndex,
+        currentIndex: 1,
         onTap: (int index) {
           setState(() {
             _currentIndex = index;
           });
 
-          if (_currentIndex == 1) {
-            Navigator.pushNamed(context, '/carrito');
-          } else {
-            Navigator.pushNamed(context, '/inicio');
+          if (_currentIndex == 0) {
+            Navigator.pushNamed(context, '/ventas'); // Navegar a la pantalla de compras
+          } else if (_currentIndex == 1) {
+            Navigator.pushNamed(context, '/inicio'); // Navegar al inicio
+          } else if (_currentIndex == 2) {
+            Navigator.pushNamed(context, '/carrito'); // Navegar al carrito
           }
         },
         items: const [
+            BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            activeIcon: Icon(Icons.sell),
+            label: 'Compras',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
@@ -144,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             activeIcon: Icon(Icons.shopping_cart),
             label: 'Carrito',
           ),
+
         ],
         selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.grey,

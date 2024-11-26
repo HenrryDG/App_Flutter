@@ -149,21 +149,29 @@ class CartScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
+        currentIndex: 2,
         onTap: (int index) {
           if (index == 0) {
+            Navigator.pushNamed(context, '/ventas'); 
+          }
+          if (index == 1) {
             Navigator.pushNamed(context, '/inicio'); 
           }
         },
         items: const [
+            BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: 'Compras',
+          ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Carrito',
           ),
+
         ],
         selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.black54,

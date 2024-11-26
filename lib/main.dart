@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart'; // Asegúrate de importar fir
 import 'providers/cart_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
+import 'screens/sells_screen.dart'; // Importa VentasScreen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/carrito': (context) => const CartScreen(),
           '/inicio': (context) => const HomeScreen(),
+          '/ventas': (context) => const VentasScreen(), // Nueva ruta para VentasScreen
         },
       ),
     );
