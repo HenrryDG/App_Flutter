@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/producto.dart';
 
@@ -7,7 +8,7 @@ class FirestoreService {
   // Método para obtener los productos desde Firestore
   Future<List<Producto>> getProductos() async {
     try {
-      QuerySnapshot querySnapshot = await _db.collection('productos').get();
+      QuerySnapshot querySnapshot = await _db.collection('productos').orderBy('nombre').get(); // Obtener productos ordenados por nombre de forma descendente
       return querySnapshot.docs
           .map((doc) => Producto(
             id: doc.id,
