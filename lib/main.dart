@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Carrito de Compras',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: const HomeScreen(),
